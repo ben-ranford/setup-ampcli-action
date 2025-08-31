@@ -1,0 +1,135 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior with the Setup Amp CLI Action
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Please provide as much detail as possible to help us reproduce and fix the issue.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe the issue you're experiencing...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Please provide detailed steps to reproduce the issue.
+      placeholder: |
+        1. Add the action to workflow with...
+        2. Run the workflow with...
+        3. See error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: The action should have...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: Instead, the action...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: runner-os
+    attributes:
+      label: Runner Operating System
+      description: Which OS are you running the action on?
+      options:
+        - ubuntu-latest
+        - ubuntu-20.04
+        - ubuntu-22.04
+        - macos-latest
+        - macos-11
+        - macos-12
+        - macos-13
+        - windows-latest
+        - windows-2019
+        - windows-2022
+        - Self-hosted runner
+        - Other (please specify in additional context)
+    validations:
+      required: true
+
+  - type: input
+    id: action-version
+    attributes:
+      label: Action Version
+      description: Which version of the setup-ampcli-action are you using?
+      placeholder: "v1, v1.0.0, main, etc."
+    validations:
+      required: true
+
+  - type: input
+    id: amp-version
+    attributes:
+      label: Amp CLI Version
+      description: Which version of Amp CLI were you trying to install?
+      placeholder: "latest, 1.2.3, etc."
+
+  - type: input
+    id: bun-version
+    attributes:
+      label: Bun Version
+      description: Which version of Bun were you using/requesting?
+      placeholder: "latest, 1.0.0, etc."
+
+  - type: textarea
+    id: workflow
+    attributes:
+      label: Workflow Configuration
+      description: Please share the relevant part of your workflow file
+      render: yaml
+      placeholder: |
+        - name: Setup Amp CLI
+          uses: ben-ranford/setup-ampcli-action@v1
+          with:
+            version: latest
+            # ... other inputs
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Action Logs
+      description: Please paste any relevant error messages or logs from the action
+      render: text
+      placeholder: Paste the error logs here...
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here (screenshots, links, etc.)
+      placeholder: Any additional information that might be helpful...
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Confirmation
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have provided all the requested information above
+          required: true

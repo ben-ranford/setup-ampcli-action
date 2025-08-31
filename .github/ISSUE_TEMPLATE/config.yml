@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/ben-ranford/setup-ampcli-action/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 🔧 Amp CLI Documentation
+    url: https://sourcegraph.com/amp
+    about: Official Amp CLI documentation and support
+  - name: 📦 Bun Documentation
+    url: https://bun.sh/docs
+    about: Bun package manager documentation

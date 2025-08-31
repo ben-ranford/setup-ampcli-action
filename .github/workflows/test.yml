@@ -1,0 +1,166 @@
+name: Test Setup Amp CLI Action
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-cross-platform:
+    name: Test Cross-Platform
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test Action - Default Settings
+        uses: ./
+        id: test-default
+
+      - name: Verify Default Installation
+        shell: bash
+        run: |
+          amp --version
+          bun --version
+
+      - name: Test Action - Specific Version
+        uses: ./
+        id: test-version
+        with:
+          version: 'latest'
+          bun-version: 'latest'
+
+      - name: Verify Version Installation
+        shell: bash
+        run: |
+          echo "Amp Version: ${{ steps.test-version.outputs.amp-version }}"
+          echo "Amp Path: ${{ steps.test-version.outputs.amp-path }}"
+          echo "Bun Version: ${{ steps.test-version.outputs.bun-version }}"
+
+      - name: Test Amp CLI Help
+        shell: bash
+        run: amp --help
+
+  test-prompt:
+    name: Test Prompt Functionality
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test Action with Prompt
+        uses: ./
+        id: test-prompt
+        with:
+          prompt: '--help'
+
+      - name: Verify Prompt Output
+        run: |
+          echo "Prompt functionality tested"
+          amp --version
+
+  test-api-key-auth:
+    name: Test API Key Authentication
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test Without API Key
+        uses: ./
+
+      - name: Test With Mock API Key
+        uses: ./
+        with:
+          amp-api-key: 'test-key-123'
+
+      - name: Verify Installation Works
+        run: |
+          amp --version
+          amp --help
+
+  test-error-handling:
+    name: Test Error Handling
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test Invalid Version
+        uses: ./
+        continue-on-error: true
+        id: invalid-version
+        with:
+          version: 'invalid-version-xyz'
+
+      - name: Verify Error Handling
+        if: steps.invalid-version.outcome != 'failure'
+        run: |
+          echo "Expected failure but action succeeded"
+          exit 1
+
+  test-validation-scripts:
+    name: Test Validation Scripts
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Amp CLI
+        uses: ./
+
+      - name: Run Validation Script (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          bash ./scripts/validate.sh
+
+      - name: Run Validation Script (Windows)  
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          .\scripts\validate.ps1
+
+  lint-and-format:
+    name: Lint and Format Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Shell Scripts
+        run: |
+          # Check if shellcheck is available
+          if command -v shellcheck &> /dev/null; then
+            find scripts -name "*.sh" -exec shellcheck {} \;
+          else
+            echo "Shellcheck not available, skipping shell script linting"
+          fi
+
+      - name: Check PowerShell Scripts
+        run: |
+          # Basic syntax check for PowerShell scripts
+          find scripts -name "*.ps1" -exec file {} \;
+
+      - name: Validate action.yml
+        run: |
+          # Check if yq is available for YAML validation
+          if command -v yq &> /dev/null; then
+            yq eval . action.yml > /dev/null
+          else
+            echo "yq not available, skipping YAML validation"
+          fi

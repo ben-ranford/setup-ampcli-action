@@ -1,0 +1,84 @@
+name: 📝 Documentation Issue
+description: Report an issue with documentation or suggest documentation improvements
+title: "[Docs]: "
+labels: ["documentation", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us improve our documentation! Whether it's unclear instructions, missing information, or typos, we appreciate your feedback.
+
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: Which documentation needs attention?
+      options:
+        - README.md
+        - Action inputs/outputs description
+        - Usage examples
+        - Troubleshooting section
+        - Code comments
+        - Other (please specify below)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      description: What kind of documentation issue is this?
+      options:
+        - Missing information
+        - Incorrect information
+        - Unclear/confusing instructions
+        - Typo or grammar error
+        - Outdated information
+        - Broken link
+        - Suggestion for improvement
+        - Other (please specify below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue-description
+    attributes:
+      label: Issue Description
+      description: Describe the documentation issue you found
+      placeholder: The documentation says... but it should say...
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Location
+      description: Where did you find this issue? (file name, section, line number, URL, etc.)
+      placeholder: In README.md, under the "Usage Examples" section...
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested-fix
+    attributes:
+      label: Suggested Fix
+      description: How would you improve this documentation?
+      placeholder: I suggest changing... to...
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other context or screenshots that might be helpful
+      placeholder: Any additional information...
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Confirmation
+      description: Please confirm the following
+      options:
+        - label: I have checked that this documentation issue hasn't been reported already
+          required: true

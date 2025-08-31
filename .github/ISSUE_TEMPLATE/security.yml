@@ -1,0 +1,118 @@
+name: 🔒 Security Issue
+description: Report a security vulnerability (use private disclosure for sensitive issues)
+title: "[Security]: "
+labels: ["security", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## ⚠️ Security Notice
+        
+        **For sensitive security vulnerabilities, please use private disclosure:**
+        - Email the maintainer directly (if contact info is available)
+        - Use GitHub's private vulnerability reporting feature
+        - Do NOT post sensitive details in this public issue
+        
+        This template is for general security concerns that don't require private disclosure.
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity Level
+      description: How would you rate the severity of this security issue?
+      options:
+        - Low - Minor security concern
+        - Medium - Moderate security risk
+        - High - Significant security vulnerability
+        - Critical - Severe security vulnerability (consider private disclosure)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Security Issue Description
+      description: Describe the security concern (avoid sensitive details if high/critical severity)
+      placeholder: There appears to be a security issue with...
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Potential Impact
+      description: What could an attacker potentially do with this vulnerability?
+      placeholder: This could allow an attacker to...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Component
+      description: Which part of the action is affected?
+      options:
+        - Shell scripts (install.sh, validate.sh)
+        - PowerShell scripts (install.ps1, validate.ps1)
+        - Action configuration (action.yml)
+        - Environment variable handling
+        - Input validation
+        - Output handling
+        - Dependencies (Bun, Amp CLI)
+        - Documentation
+        - Other (please specify below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can this security issue be reproduced? (Avoid posting exploits publicly)
+      placeholder: |
+        1. Configure the action with...
+        2. Run the workflow...
+        3. Observe that...
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Details
+      description: What environment did you discover this in?
+      placeholder: |
+        - Runner OS: ubuntu-latest
+        - Action version: v1.0.0
+        - Amp CLI version: latest
+        - Workflow context: public repository
+
+  - type: textarea
+    id: mitigation
+    attributes:
+      label: Suggested Mitigation
+      description: Do you have suggestions for how to fix this issue?
+      placeholder: This could be mitigated by...
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Any relevant security advisories, CVEs, or documentation
+      placeholder: |
+        - Related CVE: CVE-XXXX-XXXX
+        - Security advisory: https://...
+        - Documentation: https://...
+
+  - type: checkboxes
+    id: responsible-disclosure
+    attributes:
+      label: Responsible Disclosure
+      description: Please confirm your understanding
+      options:
+        - label: I understand this is a public issue and will not post sensitive exploit details
+          required: true
+        - label: I have considered whether this needs private disclosure instead
+          required: true
+        - label: I will not publicly disclose this until it has been addressed
+          required: true

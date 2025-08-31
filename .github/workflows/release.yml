@@ -1,0 +1,102 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract Version
+        id: version
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          else
+            VERSION="development"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Version: $VERSION"
+
+      - name: Generate Release Notes
+        id: release-notes
+        run: |
+          if [[ "${{ steps.version.outputs.version }}" != "development" ]]; then
+            # Get the previous tag
+            PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+            
+            if [[ -n "$PREVIOUS_TAG" ]]; then
+              echo "## Changes since $PREVIOUS_TAG" > release-notes.md
+              echo "" >> release-notes.md
+              git log --oneline --no-merges "$PREVIOUS_TAG"..HEAD >> release-notes.md
+            else
+              echo "## Initial Release" > release-notes.md
+              echo "" >> release-notes.md
+              echo "First release of Setup Amp CLI Action" >> release-notes.md
+            fi
+          else
+            echo "## Development Release" > release-notes.md
+            echo "" >> release-notes.md
+            echo "This is a development release for testing purposes." >> release-notes.md
+          fi
+
+      - name: Test Action Before Release
+        uses: ./
+        id: test-release
+
+      - name: Verify Test Results
+        run: |
+          echo "Testing completed successfully!"
+          echo "Amp Version: ${{ steps.test-release.outputs.amp-version }}"
+          echo "Bun Version: ${{ steps.test-release.outputs.bun-version }}"
+
+      - name: Create Release
+        if: steps.version.outputs.version != 'development'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          release_name: Release ${{ steps.version.outputs.version }}
+          body_path: release-notes.md
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.version, 'beta') || contains(steps.version.outputs.version, 'alpha') }}
+
+  update-major-version:
+    name: Update Major Version Tag
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    if: startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, 'beta') && !contains(github.ref, 'alpha')
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract Major Version
+        id: major-version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          MAJOR_VERSION="v${VERSION%%.*}"
+          echo "major-version=$MAJOR_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Major Version: $MAJOR_VERSION"
+
+      - name: Update Major Version Tag
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git tag -fa ${{ steps.major-version.outputs.major-version }} -m "Update ${{ steps.major-version.outputs.major-version }} to ${{ github.ref_name }}"
+          git push origin ${{ steps.major-version.outputs.major-version }} --force
