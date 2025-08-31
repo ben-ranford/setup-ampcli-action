@@ -128,9 +128,9 @@ jobs:
         run: |
           bash ./scripts/validate.sh
 
-      - name: Run Validation Script (Windows)  
+      - name: Run Validation Script (Windows)
         if: runner.os == 'Windows'
-        shell: powershell
+        shell: pwsh
         run: |
           .\scripts\validate.ps1
 

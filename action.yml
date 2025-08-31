@@ -51,7 +51,7 @@ runs:
       shell: bash
       run: |
         if [[ "$RUNNER_OS" == "Windows" ]]; then
-          powershell -File "${{ github.action_path }}/scripts/install.ps1" \
+          pwsh -File "${{ github.action_path }}/scripts/install.ps1" \
             -Version "${{ inputs.version }}" \
             -BunVersion "${{ inputs.bun-version }}" \
             -Prompt "${{ inputs.prompt }}"
@@ -68,7 +68,7 @@ runs:
       shell: bash
       run: |
         if [[ "$RUNNER_OS" == "Windows" ]]; then
-          powershell -File "${{ github.action_path }}/scripts/validate.ps1"
+          pwsh -File "${{ github.action_path }}/scripts/validate.ps1"
         else
           bash "${{ github.action_path }}/scripts/validate.sh"
         fi
